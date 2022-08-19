@@ -2027,4 +2027,4 @@ float Video_PtoV_J(const int32 inv, const bool axis, const bool scr_scale)
   return inv * JoyGunTranslate[axis].mul - JoyGunTranslate[axis].sub;
 }
 
-#include "crt.c"
+
