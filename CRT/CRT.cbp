@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="CRT" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="console">
+				<Option output="bin/crt" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/" />
+				<Option object_output="obj/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-s" />
+			<Add option="-O3" />
+			<Add option="-w" />
+		</Compiler>
+		<Linker>
+			<Add option="-s" />
+			<Add library="SDL" />
+			<Add library="SDL_image" />
+		</Linker>
+		<Unit filename="crt.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="crt.h" />
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>
