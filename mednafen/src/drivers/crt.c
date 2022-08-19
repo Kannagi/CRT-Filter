@@ -1,3 +1,7 @@
+/*
+By Kannagichan (kannagichan@gmail.com)
+*/
+
 #include "crt.h"
 static unsigned char line_buf[0x8000];
 
@@ -47,7 +51,7 @@ inline void CRT_drawline(unsigned char *dstPtr,int l,int n,int bytepixel,float *
 }
 
 
-void CRTx2(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,uint32 srcpitch,uint32 pitch)
+void CRTx2(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
 {
 	const int bytepixel = 4;
 	int i;
@@ -100,17 +104,17 @@ void CRTx2(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,uin
 
 		fading[0] = 1.0/1.25;
 		fading[1] = 1.0/1.125;
-			
+
 		CRT_drawline(dstPtr,l,n,bytepixel,fading);
 
 		l += pitch;
-		
+
 
 	}
 
 }
 
-void CRTx3(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,uint32 srcpitch,uint32 pitch)
+void CRTx3(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
 {
 	const int bytepixel = 4;
 	int i;
@@ -197,7 +201,7 @@ void CRTx3(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,uin
 
 }
 
-void CRTx4(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,uint32 srcpitch,uint32 pitch)
+void CRTx4(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
 {
 	const int bytepixel = 4;
 	int i;
@@ -288,13 +292,13 @@ void CRTx4(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,uin
 
 			l += pitch;
 		}
- 
+
 	}
 
 }
 
 
-void CRTx5(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,uint32 srcpitch,uint32 pitch)
+void CRTx5(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
 {
 	const int bytepixel = 4;
 	int i;
@@ -390,7 +394,7 @@ void CRTx5(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,uin
 
 			l += pitch;
 		}
- 
+
 	}
 
 }

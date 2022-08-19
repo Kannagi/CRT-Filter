@@ -1,6 +1,6 @@
 # CRT
 
-Algorithm to simulate a CRT some example:
+Algorithm to simulate a CRT.
 
 <img src="CRT/bin/screen/1_filter2.png">
 

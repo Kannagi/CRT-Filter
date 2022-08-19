@@ -1,4 +1,6 @@
-
+/*
+By Kannagichan (kannagichan@gmail.com)
+*/
 
 #include "crt.h"
 static unsigned char line_buf[0x8000];
