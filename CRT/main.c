@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 
 
     SDL_Surface *image,*copy,*image2;
-    image2 = IMG_Load("ff42.png");
+    image2 = IMG_Load("ff6shot080.png");
 	copy = SDL_CreateRGBSurface(0,image2->w,image2->h,32,0,0,0,0);
     SDL_BlitSurface(image2,NULL,copy,NULL);
 

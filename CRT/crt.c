@@ -7,46 +7,31 @@ static unsigned char line_buf[0x8000];
 
 inline void CRT_initline(unsigned char *dstPtr,int l,int n,int bytepixel)
 {
-	int swt = 0;
 	for(int j = 0;j < n;j+= bytepixel)
 	{
-		if(swt == 0)
-		{
-			dstPtr[l+j+0] = (line_buf[j+0])&0xF8;
-			dstPtr[l+j+1] = (line_buf[j+1])&0xF8;
-			dstPtr[l+j+2] = (line_buf[j+2])&0xF8;
-		}
-		else
-		{
-			dstPtr[l+j+0] = (line_buf[j+0])|7;
-			dstPtr[l+j+1] = (line_buf[j+1])|7;
-			dstPtr[l+j+2] = (line_buf[j+2])|7;
-		}
+		dstPtr[l+j+0] = (line_buf[j+0])&0xF8;
+		dstPtr[l+j+1] = (line_buf[j+1])&0xF8;
+		dstPtr[l+j+2] = (line_buf[j+2])&0xF8;
+		j+= bytepixel;
 
-		swt = !swt;
+		dstPtr[l+j+0] = (line_buf[j+0])|7;
+		dstPtr[l+j+1] = (line_buf[j+1])|7;
+		dstPtr[l+j+2] = (line_buf[j+2])|7;
 	}
 }
 
 inline void CRT_drawline(unsigned char *dstPtr,int l,int n,int bytepixel,float *fading)
 {
-	int swt = 0;
 	for(int j = 0;j < n;j+= bytepixel)
 	{
-		if(swt == 0)
-		{
-			dstPtr[l+j+0] = (line_buf[j+0])*fading[0];
-			dstPtr[l+j+1] = (line_buf[j+1])*fading[0];
-			dstPtr[l+j+2] = (line_buf[j+2])*fading[0];
-		}
-		else
-		{
-			dstPtr[l+j+0] = (line_buf[j+0])*fading[1];
-			dstPtr[l+j+1] = (line_buf[j+1])*fading[1];
-			dstPtr[l+j+2] = (line_buf[j+2])*fading[1];
-		}
+		dstPtr[l+j+0] = (line_buf[j+0])*fading[0];
+		dstPtr[l+j+1] = (line_buf[j+1])*fading[0];
+		dstPtr[l+j+2] = (line_buf[j+2])*fading[0];
+		j+= bytepixel;
 
-		swt = !swt;
-
+		dstPtr[l+j+0] = (line_buf[j+0])*fading[1];
+		dstPtr[l+j+1] = (line_buf[j+1])*fading[1];
+		dstPtr[l+j+2] = (line_buf[j+2])*fading[1];
 	}
 }
 
