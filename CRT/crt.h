@@ -2,7 +2,9 @@
 By Kannagichan (kannagichan@gmail.com)
 */
 
-void CRTx2(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch);
-void CRTx3(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch);
-void CRTx4(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch);
-void CRTx5(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch);
+void CRTx22(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch);
+void CRTx32(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch);
+void CRTx33(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch);
+void CRTx43(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch);
+void CRTx44(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch);
+void CRTx54(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch);

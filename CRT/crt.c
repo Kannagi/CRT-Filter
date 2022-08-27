@@ -5,7 +5,7 @@ By Kannagichan (kannagichan@gmail.com)
 #include "crt.h"
 static unsigned char line_buf[0x8000];
 
-inline void CRT_initline(unsigned char *dstPtr,int l,int n,int bytepixel)
+static inline void __attribute__((optimize("-O3"), inline)) CRT_initline(unsigned char *dstPtr,int l,int n,int bytepixel)
 {
 	for(int j = 0;j < n;j+= bytepixel)
 	{
@@ -18,10 +18,12 @@ inline void CRT_initline(unsigned char *dstPtr,int l,int n,int bytepixel)
 		dstPtr[l+j+1] = (line_buf[j+1])|7;
 		dstPtr[l+j+2] = (line_buf[j+2])|7;
 	}
+
 }
 
-inline void CRT_drawline(unsigned char *dstPtr,int l,int n,int bytepixel,float *fading)
+static inline void __attribute__((optimize("-O3"), inline)) CRT_drawline(unsigned char *dstPtr,int l,int n,int bytepixel,float *fading)
 {
+
 	for(int j = 0;j < n;j+= bytepixel)
 	{
 		dstPtr[l+j+0] = (line_buf[j+0])*fading[0];
@@ -33,10 +35,11 @@ inline void CRT_drawline(unsigned char *dstPtr,int l,int n,int bytepixel,float *
 		dstPtr[l+j+1] = (line_buf[j+1])*fading[1];
 		dstPtr[l+j+2] = (line_buf[j+2])*fading[1];
 	}
+
 }
 
 
-void CRTx2(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
+void __attribute__((optimize("-O3"))) CRTx22(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
 {
 	const int bytepixel = 4;
 	int i;
@@ -99,7 +102,167 @@ void CRTx2(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int
 
 }
 
-void CRTx3(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
+void __attribute__((optimize("-O3"))) CRTx32(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
+{
+	const int bytepixel = 4;
+	int i;
+	int R = 0,G = 0,B = 0,RS[3],GS[3],BS[3];
+	int l = 0,j;
+	int x,y;
+
+	for(y = 0;y < height;y++)
+	{
+		for(x = 0;x < width;x++)
+		{
+			i = (x*bytepixel) + (y*srcpitch);
+			R = srcPtr[i+0];
+			G = srcPtr[i+1];
+			B = srcPtr[i+2];
+
+			if(x != width-1)
+			{
+				i+=bytepixel;
+				RS[0] = ( ((float)srcPtr[i+0]*0.3)+((float)R*0.7) );
+				GS[0] = ( ((float)srcPtr[i+1]*0.3)+((float)G*0.7) );
+				BS[0] = ( ((float)srcPtr[i+2]*0.3)+((float)B*0.7) );
+
+
+				RS[2] = ( ((float)srcPtr[i+0]*0.7)+((float)R*0.4) );
+				GS[2] = ( ((float)srcPtr[i+1]*0.7)+((float)G*0.4) );
+				BS[2] = ( ((float)srcPtr[i+2]*0.7)+((float)B*0.4) );
+
+
+			}
+			else
+			{
+				for(j = 0;j < 2;j++)
+				{
+					RS[j] = R;
+					GS[j] = G;
+					BS[j] = B;
+				}
+			}
+
+			int tmp = x*bytepixel*4;
+			line_buf[tmp+0] = R;
+			line_buf[tmp+1] = G;
+			line_buf[tmp+2] = B;
+			line_buf[tmp+3] = 0xFF;
+
+			for(j = 0;j < 2;j++)
+			{
+				line_buf[tmp+4] = RS[j];
+				line_buf[tmp+5] = GS[j];
+				line_buf[tmp+6] = BS[j];
+				line_buf[tmp+7] = 0xFF;
+
+				tmp += bytepixel;
+			}
+		}
+
+		int n = bytepixel*width*2;
+
+		CRT_initline(dstPtr,l,n,bytepixel);
+		l += pitch;
+
+		float fading[2];
+
+		fading[0] = 1.0/1.25;
+		fading[1] = 1.0/1.125;
+
+		CRT_drawline(dstPtr,l,n,bytepixel,fading);
+
+		l += pitch;
+	}
+
+}
+
+void __attribute__((optimize("-O3"))) CRTx33(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
+{
+	const int bytepixel = 4;
+	int i;
+	int R = 0,G = 0,B = 0,RS[3],GS[3],BS[3];
+	int l = 0,j;
+	int x,y;
+
+	for(y = 0;y < height;y++)
+	{
+		for(x = 0;x < width;x++)
+		{
+			i = (x*bytepixel) + (y*srcpitch);
+			R = srcPtr[i+0];
+			G = srcPtr[i+1];
+			B = srcPtr[i+2];
+
+			if(x != width-1)
+			{
+				i+=bytepixel;
+				RS[0] = ( ((float)srcPtr[i+0]*0.3)+((float)R*0.7) );
+				GS[0] = ( ((float)srcPtr[i+1]*0.3)+((float)G*0.7) );
+				BS[0] = ( ((float)srcPtr[i+2]*0.3)+((float)B*0.7) );
+
+
+				RS[2] = ( ((float)srcPtr[i+0]*0.7)+((float)R*0.4) );
+				GS[2] = ( ((float)srcPtr[i+1]*0.7)+((float)G*0.4) );
+				BS[2] = ( ((float)srcPtr[i+2]*0.7)+((float)B*0.4) );
+
+
+			}
+			else
+			{
+				for(j = 0;j < 2;j++)
+				{
+					RS[j] = R;
+					GS[j] = G;
+					BS[j] = B;
+				}
+			}
+
+			int tmp = x*bytepixel*4;
+			line_buf[tmp+0] = R;
+			line_buf[tmp+1] = G;
+			line_buf[tmp+2] = B;
+			line_buf[tmp+3] = 0xFF;
+
+			for(j = 0;j < 2;j++)
+			{
+				line_buf[tmp+4] = RS[j];
+				line_buf[tmp+5] = GS[j];
+				line_buf[tmp+6] = BS[j];
+				line_buf[tmp+7] = 0xFF;
+
+				tmp += bytepixel;
+			}
+		}
+
+		int n = bytepixel*width*4;
+		CRT_initline(dstPtr,l,n,bytepixel);
+		l += pitch;
+
+		float fading[2];
+		for(i = 0;i < 2;i++)
+		{
+			if(i == 0)
+			{
+				fading[0] = 1.0/1.25;
+				fading[1] = 1.0/1.125;
+			}
+			else
+			{
+				fading[0] = 1.0/1.75;
+				fading[1] = 1.0/1.5;
+			}
+
+			CRT_drawline(dstPtr,l,n,bytepixel,fading);
+
+			l += pitch;
+		}
+	}
+
+}
+
+
+void __attribute__((optimize("-O3"))) CRTx43(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
 {
 	const int bytepixel = 4;
 	int i;
@@ -186,7 +349,7 @@ void CRTx3(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int
 
 }
 
-void CRTx4(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
+void __attribute__((optimize("-O3"))) CRTx44(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
 {
 	const int bytepixel = 4;
 	int i;
@@ -282,8 +445,7 @@ void CRTx4(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int
 
 }
 
-
-void CRTx5(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
+void __attribute__((optimize("-O3"))) CRTx54(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
 {
 	const int bytepixel = 4;
 	int i;

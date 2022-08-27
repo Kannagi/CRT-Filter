@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 		opitch = screen->w*4;
 
 
-		CRTx2(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
+		CRTx22(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
 	}else
 	{
 		if(mode == 1)
@@ -50,7 +50,7 @@ int main(int argc, char** argv)
 			SDL_FillRect(screen,NULL,SDL_MapRGB(screen->format,128,128,128));
 			opitch = screen->w*4;
 
-			CRTx3(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
+			CRTx43(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
 		}else
 		if(mode == 2)
 		{
@@ -58,14 +58,14 @@ int main(int argc, char** argv)
 			SDL_FillRect(screen,NULL,SDL_MapRGB(screen->format,128,128,128));
 			opitch = screen->w*4;
 
-			CRTx4(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
+			CRTx44(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
 		}else
 		{
 			screen = SDL_SetVideoMode(image2->w*5, image2->h*4, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
 			SDL_FillRect(screen,NULL,SDL_MapRGB(screen->format,128,128,128));
 			opitch = screen->w*4;
 
-			CRTx5(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
+			CRTx54(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
 		}
 	}
 
