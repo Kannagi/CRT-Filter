@@ -19,7 +19,7 @@
 #include "main.h"
 
 #ifdef WIN32
- #include <SDL_syswm.h>
+ #include <SDL2/SDL_syswm.h>
  #include <mednafen/win32-common.h>
 #else
  #include "icon.h"
@@ -47,6 +47,8 @@
 #include "2xSaI.h"
 #include "crt.h"
 #endif
+
+#include "crt.c"
 
 class SDL_to_MDFN_Surface_Wrapper : public MDFN_Surface
 {
