@@ -1,11 +1,12 @@
 /*
 By Kannagichan (kannagichan@gmail.com)
 */
-
+#include <stdint.h>
 #include "crt.h"
 static unsigned char line_buf[0x8000];
 
-static inline void __attribute__((optimize("-O3"), inline)) CRT_initline(unsigned char *dstPtr,int l,int n,int bytepixel)
+/*
+static inline void __attribute__((optimize("-O1"), inline)) CRT_initline2(unsigned char *dstPtr,int l,int n,int bytepixel)
 {
 	for(int j = 0;j < n;j+= bytepixel)
 	{
@@ -21,7 +22,7 @@ static inline void __attribute__((optimize("-O3"), inline)) CRT_initline(unsigne
 
 }
 
-static inline void __attribute__((optimize("-O3"), inline)) CRT_drawline(unsigned char *dstPtr,int l,int n,int bytepixel,float *fading)
+static inline void __attribute__((optimize("-O3"), inline)) CRT_drawline2(unsigned char *dstPtr,int l,int n,int bytepixel,float *fading)
 {
 
 	for(int j = 0;j < n;j+= bytepixel)
@@ -36,7 +37,45 @@ static inline void __attribute__((optimize("-O3"), inline)) CRT_drawline(unsigne
 		dstPtr[l+j+2] = (line_buf[j+2])*fading[1];
 	}
 
+}*/
+
+static inline void __attribute__((optimize("-O3"), inline)) CRT_initline(unsigned char *dstPtr,int l,int n,int bytepixel)
+{
+	uint32_t *pline_buf = (uint32_t*)line_buf;
+	uint32_t *pdstPtr = (uint32_t*)dstPtr;
+
+	n = n>>2;
+	l = l>>2;
+	for(int j = 0;j < n;j++)
+	{
+		pdstPtr[l+j] = (pline_buf[j])&0xF8F8F8F8;
+		j++;
+		pdstPtr[l+j] = (pline_buf[j])|0x07070707;
+	}
+
 }
+
+static inline void __attribute__((optimize("-O2"), inline)) CRT_drawline(unsigned char *dstPtr,int l,int n,int bytepixel,float *fading)
+{
+	float fdg1 = fading[0];
+	float fdg2 = fading[1];
+
+	for(int j = 0;j < n;j+= bytepixel)
+	{
+		dstPtr[l+j+0] = (line_buf[j+0])*fdg1;
+		dstPtr[l+j+1] = (line_buf[j+1])*fdg1;
+		dstPtr[l+j+2] = (line_buf[j+2])*fdg1;
+		j+= bytepixel;
+
+		dstPtr[l+j+0] = (line_buf[j+0])*fdg2;
+		dstPtr[l+j+1] = (line_buf[j+1])*fdg2;
+		dstPtr[l+j+2] = (line_buf[j+2])*fdg2;
+	}
+
+}
+
+
+
 
 
 void __attribute__((optimize("-O3"))) CRTx22(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
@@ -58,19 +97,12 @@ void __attribute__((optimize("-O3"))) CRTx22(unsigned char *srcPtr,unsigned char
 			G = srcPtr[i+1];
 			B = srcPtr[i+2];
 
-			if(x != width-1)
-			{
-				i+=bytepixel;
-				RS = ( ((int)srcPtr[i+0]+R)/2 );
-				GS = ( ((int)srcPtr[i+1]+G)/2 );
-				BS = ( ((int)srcPtr[i+2]+B)/2 );
-			}
-			else
-			{
-				RS = R;
-				GS = G;
-				BS = B;
-			}
+
+			i+=bytepixel;
+			RS = ( ((int)srcPtr[i+0]+R)/2 );
+			GS = ( ((int)srcPtr[i+1]+G)/2 );
+			BS = ( ((int)srcPtr[i+2]+B)/2 );
+
 
 			int tmp = x*bytepixel*2;
 			line_buf[tmp+0] = R;
@@ -119,29 +151,18 @@ void __attribute__((optimize("-O3"))) CRTx32(unsigned char *srcPtr,unsigned char
 			G = srcPtr[i+1];
 			B = srcPtr[i+2];
 
-			if(x != width-1)
-			{
-				i+=bytepixel;
-				RS[0] = ( ((float)srcPtr[i+0]*0.3)+((float)R*0.7) );
-				GS[0] = ( ((float)srcPtr[i+1]*0.3)+((float)G*0.7) );
-				BS[0] = ( ((float)srcPtr[i+2]*0.3)+((float)B*0.7) );
+
+			i+=bytepixel;
+			RS[0] = ( ((float)srcPtr[i+0]*0.3)+((float)R*0.7) );
+			GS[0] = ( ((float)srcPtr[i+1]*0.3)+((float)G*0.7) );
+			BS[0] = ( ((float)srcPtr[i+2]*0.3)+((float)B*0.7) );
 
 
-				RS[2] = ( ((float)srcPtr[i+0]*0.7)+((float)R*0.4) );
-				GS[2] = ( ((float)srcPtr[i+1]*0.7)+((float)G*0.4) );
-				BS[2] = ( ((float)srcPtr[i+2]*0.7)+((float)B*0.4) );
+			RS[2] = ( ((float)srcPtr[i+0]*0.7)+((float)R*0.4) );
+			GS[2] = ( ((float)srcPtr[i+1]*0.7)+((float)G*0.4) );
+			BS[2] = ( ((float)srcPtr[i+2]*0.7)+((float)B*0.4) );
 
 
-			}
-			else
-			{
-				for(j = 0;j < 2;j++)
-				{
-					RS[j] = R;
-					GS[j] = G;
-					BS[j] = B;
-				}
-			}
 
 			int tmp = x*bytepixel*4;
 			line_buf[tmp+0] = R;
@@ -194,29 +215,16 @@ void __attribute__((optimize("-O3"))) CRTx33(unsigned char *srcPtr,unsigned char
 			G = srcPtr[i+1];
 			B = srcPtr[i+2];
 
-			if(x != width-1)
-			{
-				i+=bytepixel;
-				RS[0] = ( ((float)srcPtr[i+0]*0.3)+((float)R*0.7) );
-				GS[0] = ( ((float)srcPtr[i+1]*0.3)+((float)G*0.7) );
-				BS[0] = ( ((float)srcPtr[i+2]*0.3)+((float)B*0.7) );
+
+			i+=bytepixel;
+			RS[0] = ( ((float)srcPtr[i+0]*0.3)+((float)R*0.7) );
+			GS[0] = ( ((float)srcPtr[i+1]*0.3)+((float)G*0.7) );
+			BS[0] = ( ((float)srcPtr[i+2]*0.3)+((float)B*0.7) );
 
 
-				RS[2] = ( ((float)srcPtr[i+0]*0.7)+((float)R*0.4) );
-				GS[2] = ( ((float)srcPtr[i+1]*0.7)+((float)G*0.4) );
-				BS[2] = ( ((float)srcPtr[i+2]*0.7)+((float)B*0.4) );
-
-
-			}
-			else
-			{
-				for(j = 0;j < 2;j++)
-				{
-					RS[j] = R;
-					GS[j] = G;
-					BS[j] = B;
-				}
-			}
+			RS[2] = ( ((float)srcPtr[i+0]*0.7)+((float)R*0.4) );
+			GS[2] = ( ((float)srcPtr[i+1]*0.7)+((float)G*0.4) );
+			BS[2] = ( ((float)srcPtr[i+2]*0.7)+((float)B*0.4) );
 
 			int tmp = x*bytepixel*4;
 			line_buf[tmp+0] = R;
@@ -279,32 +287,20 @@ void __attribute__((optimize("-O3"))) CRTx43(unsigned char *srcPtr,unsigned char
 			G = srcPtr[i+1];
 			B = srcPtr[i+2];
 
-			if(x != width-1)
-			{
-				i+=bytepixel;
-				RS[0] = ( ((float)srcPtr[i+0]*0.3)+((float)R*0.7) );
-				GS[0] = ( ((float)srcPtr[i+1]*0.3)+((float)G*0.7) );
-				BS[0] = ( ((float)srcPtr[i+2]*0.3)+((float)B*0.7) );
 
-				RS[1] = ((int)srcPtr[i+0]+R)/2;
-				GS[1] = ((int)srcPtr[i+1]+G)/2;
-				BS[1] = ((int)srcPtr[i+2]+B)/2;
+			i+=bytepixel;
+			RS[0] = ( ((float)srcPtr[i+0]*0.3)+((float)R*0.7) );
+			GS[0] = ( ((float)srcPtr[i+1]*0.3)+((float)G*0.7) );
+			BS[0] = ( ((float)srcPtr[i+2]*0.3)+((float)B*0.7) );
 
-				RS[2] = ( ((float)srcPtr[i+0]*0.7)+((float)R*0.3) );
-				GS[2] = ( ((float)srcPtr[i+1]*0.7)+((float)G*0.3) );
-				BS[2] = ( ((float)srcPtr[i+2]*0.7)+((float)B*0.3) );
+			RS[1] = ((int)srcPtr[i+0]+R)/2;
+			GS[1] = ((int)srcPtr[i+1]+G)/2;
+			BS[1] = ((int)srcPtr[i+2]+B)/2;
 
+			RS[2] = ( ((float)srcPtr[i+0]*0.7)+((float)R*0.3) );
+			GS[2] = ( ((float)srcPtr[i+1]*0.7)+((float)G*0.3) );
+			BS[2] = ( ((float)srcPtr[i+2]*0.7)+((float)B*0.3) );
 
-			}
-			else
-			{
-				for(j = 0;j < 3;j++)
-				{
-					RS[j] = R;
-					GS[j] = G;
-					BS[j] = B;
-				}
-			}
 
 			int tmp = x*bytepixel*4;
 			line_buf[tmp+0] = R;
@@ -367,32 +363,20 @@ void __attribute__((optimize("-O3"))) CRTx44(unsigned char *srcPtr,unsigned char
 			G = srcPtr[i+1];
 			B = srcPtr[i+2];
 
-			if(x != width-1)
-			{
-				i+=bytepixel;
-				RS[0] = ( ((float)srcPtr[i+0]*0.3)+((float)R*0.7) );
-				GS[0] = ( ((float)srcPtr[i+1]*0.3)+((float)G*0.7) );
-				BS[0] = ( ((float)srcPtr[i+2]*0.3)+((float)B*0.7) );
 
-				RS[1] = ((int)srcPtr[i+0]+R)/2;
-				GS[1] = ((int)srcPtr[i+1]+G)/2;
-				BS[1] = ((int)srcPtr[i+2]+B)/2;
+			i+=bytepixel;
+			RS[0] = ( ((float)srcPtr[i+0]*0.3)+((float)R*0.7) );
+			GS[0] = ( ((float)srcPtr[i+1]*0.3)+((float)G*0.7) );
+			BS[0] = ( ((float)srcPtr[i+2]*0.3)+((float)B*0.7) );
 
-				RS[2] = ( ((float)srcPtr[i+0]*0.7)+((float)R*0.3) );
-				GS[2] = ( ((float)srcPtr[i+1]*0.7)+((float)G*0.3) );
-				BS[2] = ( ((float)srcPtr[i+2]*0.7)+((float)B*0.3) );
+			RS[1] = ((int)srcPtr[i+0]+R)/2;
+			GS[1] = ((int)srcPtr[i+1]+G)/2;
+			BS[1] = ((int)srcPtr[i+2]+B)/2;
 
+			RS[2] = ( ((float)srcPtr[i+0]*0.7)+((float)R*0.3) );
+			GS[2] = ( ((float)srcPtr[i+1]*0.7)+((float)G*0.3) );
+			BS[2] = ( ((float)srcPtr[i+2]*0.7)+((float)B*0.3) );
 
-			}
-			else
-			{
-				for(j = 0;j < 3;j++)
-				{
-					RS[j] = R;
-					GS[j] = G;
-					BS[j] = B;
-				}
-			}
 
 			int tmp = x*bytepixel*4;
 			line_buf[tmp+0] = R;
@@ -445,67 +429,64 @@ void __attribute__((optimize("-O3"))) CRTx44(unsigned char *srcPtr,unsigned char
 
 }
 
+
 void __attribute__((optimize("-O3"))) CRTx54(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
 {
 	const int bytepixel = 4;
 	int i;
 
-	int R = 0,G = 0,B = 0,RS[4],GS[4],BS[4];
+	int R = 0,G = 0,B = 0,RS[5],GS[5],BS[5];
 	int l = 0,j;
 	int x,y;
 
+	int tmp =0;
+
 	for(y = 0;y < height;y++)
 	{
+		tmp = 0;
+		int yp = y*srcpitch;
 		for(x = 0;x < width;x++)
 		{
-			i = (x*bytepixel) + (y*srcpitch);
-			R = srcPtr[i+0];
-			G = srcPtr[i+1];
-			B = srcPtr[i+2];
+			i = (x*bytepixel) + yp;
+			float srcR,srcG,srcB,RF,GF,BF;
 
-			if(x != width-1)
-			{
-				i+=bytepixel;
-				RS[0] = ( ((float)srcPtr[i+0]*0.2)+((float)R*0.8) );
-				GS[0] = ( ((float)srcPtr[i+1]*0.2)+((float)G*0.8) );
-				BS[0] = ( ((float)srcPtr[i+2]*0.2)+((float)B*0.8) );
+			RF = R = srcPtr[i+0];
+			GF = G = srcPtr[i+1];
+			BF = B = srcPtr[i+2];
 
-				RS[1] = ( ((float)srcPtr[i+0]*0.4)+((float)R*0.6) );
-				GS[1] = ( ((float)srcPtr[i+1]*0.4)+((float)G*0.6) );
-				BS[1] = ( ((float)srcPtr[i+2]*0.4)+((float)B*0.6) );
+			srcR = srcPtr[i+0];
+			srcG = srcPtr[i+1];
+			srcB = srcPtr[i+2];
 
-				RS[2] = ( ((float)srcPtr[i+0]*0.6)+((float)R*0.4) );
-				GS[2] = ( ((float)srcPtr[i+1]*0.6)+((float)G*0.4) );
-				BS[2] = ( ((float)srcPtr[i+2]*0.6)+((float)B*0.4) );
+			i+=bytepixel;
+			RS[0] = ( (srcR*0.2)+(RF*0.8) );
+			GS[0] = ( (srcG*0.2)+(GF*0.8) );
+			BS[0] = ( (srcB*0.2)+(BF*0.8) );
 
-				RS[3] = ( ((float)srcPtr[i+0]*0.8)+((float)R*0.2) );
-				GS[3] = ( ((float)srcPtr[i+1]*0.8)+((float)G*0.2) );
-				BS[3] = ( ((float)srcPtr[i+2]*0.8)+((float)B*0.2) );
+			RS[1] = ( (srcR*0.4)+(RF*0.6) );
+			GS[1] = ( (srcG*0.4)+(GF*0.6) );
+			BS[1] = ( (srcB*0.4)+(BF*0.6) );
 
+			RS[2] = ( (srcR*0.6)+(RF*0.4) );
+			GS[2] = ( (srcB*0.6)+(GF*0.4) );
+			BS[2] = ( (srcB*0.6)+(BF*0.4) );
 
-			}
-			else
-			{
-				for(j = 0;j < 4;j++)
-				{
-					RS[j] = R;
-					GS[j] = G;
-					BS[j] = B;
-				}
-			}
+			RS[3] = ( (srcR*0.8)+(RF*0.2) );
+			GS[3] = ( (srcG*0.8)+(GF*0.2) );
+			BS[3] = ( (srcB*0.8)+(BF*0.2) );
 
-			int tmp = x*bytepixel*5;
 			line_buf[tmp+0] = R;
 			line_buf[tmp+1] = G;
 			line_buf[tmp+2] = B;
 			line_buf[tmp+3] = 0xFF;
+			tmp += bytepixel;
 
 			for(j = 0;j < 4;j++)
 			{
-				line_buf[tmp+4] = RS[j];
-				line_buf[tmp+5] = GS[j];
-				line_buf[tmp+6] = BS[j];
-				line_buf[tmp+7] = 0xFF;
+				line_buf[tmp+0] = RS[j];
+				line_buf[tmp+1] = GS[j];
+				line_buf[tmp+2] = BS[j];
+				line_buf[tmp+3] = 0xFF;
 				tmp += bytepixel;
 			}
 

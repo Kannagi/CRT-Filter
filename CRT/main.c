@@ -10,9 +10,13 @@
 #endif
 
 #include "crt.h"
+#include <stdint.h>
 
-
-
+uint64_t rdtsc(void) {
+  register uint64_t x;
+  __asm__ volatile ("rdtsc" : "=A" (x));
+  return x;
+}
 
 
 int main(int argc, char** argv)
@@ -29,7 +33,7 @@ int main(int argc, char** argv)
     SDL_BlitSurface(image2,NULL,copy,NULL);
 
 
-    int mode = 0;
+    int mode =3;
 
     int pitch = copy->w*4;
     int opitch = screen->w*4;
@@ -65,7 +69,14 @@ int main(int argc, char** argv)
 			SDL_FillRect(screen,NULL,SDL_MapRGB(screen->format,128,128,128));
 			opitch = screen->w*4;
 
-			CRTx54(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
+			uint64_t start = rdtsc();
+
+			for(int i;i <60;i++)
+				CRTx54(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
+
+			uint64_t end = rdtsc()-start;
+
+			printf("%d\n",end);
 		}
 	}
 
