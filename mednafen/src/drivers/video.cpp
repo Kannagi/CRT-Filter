@@ -130,10 +130,12 @@ enum
  NTVB_SUPEREAGLE,
 
 
- NTVB_CRT2,
- NTVB_CRT3,
- NTVB_CRT4,
- NTVB_CRT5,
+ NTVB_CRT22,
+ NTVB_CRT32,
+ NTVB_CRT33,
+ NTVB_CRT43,
+ NTVB_CRT44,
+ NTVB_CRT54,
 };
 
 static const MDFNSetting_EnumList VDriver_List[] =
@@ -255,10 +257,12 @@ static const MDFNSetting_EnumList Special_List[] =
     { "super2xsai", NTVB_SUPER2XSAI, "Super 2xSaI" },
     { "supereagle", NTVB_SUPEREAGLE, "Super Eagle" },
 
-    { "crt2", 	NTVB_CRT2, "CRT 2x2" },
-    { "crt3", 	NTVB_CRT3, "CRT 4x3" },
-    { "crt4", 	NTVB_CRT4, "CRT 4x4" },
-    { "crt5", 	NTVB_CRT5, "CRT 5x4" },
+    { "crtx22",NTVB_CRT22, "CRT 2x2" },
+    { "crtx32",NTVB_CRT32, "CRT 3x2" },
+    { "crtx33",NTVB_CRT33, "CRT 3x3" },
+    { "crtx43",NTVB_CRT43, "CRT 4x3" },
+    { "crtx44",NTVB_CRT44, "CRT 4x4" },
+    { "crtx54",NTVB_CRT54, "CRT 5x4" },
 
 #endif
 
@@ -451,10 +455,12 @@ static const struct ScalerDefinition
 	{ NTVB_SUPER2XSAI, 2, 2 },
 	{ NTVB_SUPEREAGLE, 2, 2 },
 
-  { NTVB_CRT2, 2, 2 },
-  { NTVB_CRT3, 4, 3 },
-  { NTVB_CRT4, 4, 4 },
-  { NTVB_CRT5, 5, 4 },
+  { NTVB_CRT22, 2, 2 },
+  { NTVB_CRT32, 3, 2 },
+  { NTVB_CRT33, 3, 3 },
+  { NTVB_CRT43, 4, 3 },
+  { NTVB_CRT44, 4, 4 },
+  { NTVB_CRT54, 5, 4 },
 };
 
 static MDFNGI *VideoGI;
@@ -1540,7 +1546,6 @@ static void SubBlit(const MDFN_Surface *source_surface, const MDFN_Rect &src_rec
 
 
  
-//printf("ok %d/%d %d %d %d\n",CurrentScaler->id  , NTVB_CRT2 , NTVB_CRT3 , NTVB_CRT4, NTVB_CRT5);
    if(CurrentScaler)
    {
     MDFN_Rect boohoo_rect({0, 0, eff_src_rect.w * CurrentScaler->xscale, eff_src_rect.h * CurrentScaler->yscale});
@@ -1585,14 +1590,18 @@ static void SubBlit(const MDFN_Surface *source_surface, const MDFN_Rect &src_rec
     else
     {
      uint8 *source_pixies = (uint8 *)(eff_source_surface->pixels + eff_src_rect.x + eff_src_rect.y * eff_source_surface->pitchinpix);
-     if(CurrentScaler->id == NTVB_CRT2)
-      CRTx2(source_pixies, screen_pixies, eff_src_rect.w, eff_src_rect.h, eff_source_surface->pitchinpix * sizeof(uint32), screen_pitch);
-     else if(CurrentScaler->id == NTVB_CRT3)
-      CRTx3(source_pixies, screen_pixies, eff_src_rect.w, eff_src_rect.h, eff_source_surface->pitchinpix * sizeof(uint32), screen_pitch);
-     else if(CurrentScaler->id == NTVB_CRT4)
-      CRTx4(source_pixies, screen_pixies, eff_src_rect.w, eff_src_rect.h, eff_source_surface->pitchinpix * sizeof(uint32), screen_pitch);
-     else if(CurrentScaler->id == NTVB_CRT5)
-      CRTx5(source_pixies, screen_pixies, eff_src_rect.w, eff_src_rect.h, eff_source_surface->pitchinpix * sizeof(uint32), screen_pitch);
+     if(CurrentScaler->id == NTVB_CRT22)
+      CRTx22(source_pixies, screen_pixies, eff_src_rect.w, eff_src_rect.h, eff_source_surface->pitchinpix * sizeof(uint32), screen_pitch);
+     else if(CurrentScaler->id == NTVB_CRT32)
+      CRTx32(source_pixies, screen_pixies, eff_src_rect.w, eff_src_rect.h, eff_source_surface->pitchinpix * sizeof(uint32), screen_pitch);
+     else if(CurrentScaler->id == NTVB_CRT33)
+      CRTx33(source_pixies, screen_pixies, eff_src_rect.w, eff_src_rect.h, eff_source_surface->pitchinpix * sizeof(uint32), screen_pitch);
+     else if(CurrentScaler->id == NTVB_CRT43)
+      CRTx43(source_pixies, screen_pixies,eff_src_rect.w, eff_src_rect.h, eff_source_surface->pitchinpix * sizeof(uint32), screen_pitch);
+     else if(CurrentScaler->id == NTVB_CRT44)
+      CRTx44(source_pixies, screen_pixies,eff_src_rect.w, eff_src_rect.h, eff_source_surface->pitchinpix * sizeof(uint32), screen_pitch);
+     else if(CurrentScaler->id == NTVB_CRT54)
+      CRTx54(source_pixies, screen_pixies, eff_src_rect.w, eff_src_rect.h, eff_source_surface->pitchinpix * sizeof(uint32), screen_pitch);
      else if(CurrentScaler->id == NTVB_HQ2X)
       hq2x_32(source_pixies, screen_pixies, eff_src_rect.w, eff_src_rect.h, eff_source_surface->pitchinpix * sizeof(uint32), screen_pitch);
      else if(CurrentScaler->id == NTVB_HQ3X)
