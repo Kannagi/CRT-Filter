@@ -38,12 +38,18 @@ int main(int argc, char** argv)
     int pitch = copy->w*4;
     int opitch = screen->w*4;
 
-    screen = SDL_SetVideoMode(image2->w*3, image2->h*3, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    screen = SDL_SetVideoMode(image2->w*5, image2->h*4, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
 	SDL_FillRect(screen,NULL,SDL_MapRGB(screen->format,128,128,128));
 	opitch = screen->w*4;
 
 
-	CRTx33(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
+	uint64_t start = rdtsc();
+
+			for(int i;i <60;i++)
+				CRTx54(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
+
+			uint64_t end = rdtsc()-start;
+			printf("%d\n",end);
 
 
 /*

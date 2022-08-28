@@ -1,11 +1,11 @@
 # depslib dependency file v1.0
-1661668942 source:/home/Kannagi/Documents/Projet/CRT/git/CRT/CRT/crt.c
+1661698230 source:/home/Kannagi/Documents/Projet/CRT/git/CRT/CRT/crt.c
 	<stdint.h>
 	"crt.h"
 
 1661607836 /home/Kannagi/Documents/Projet/CRT/git/CRT/CRT/crt.h
 
-1661668958 source:/home/Kannagi/Documents/Projet/CRT/git/CRT/CRT/main.c
+1661695586 source:/home/Kannagi/Documents/Projet/CRT/git/CRT/CRT/main.c
 	<stdlib.h>
 	<stdio.h>
 	<SDL/SDL.h>
@@ -14,6 +14,10 @@
 	<stdint.h>
 
 1661617495 source:/home/Kannagi/Documents/Projet/CRT/git/CRT/CRT/crt.cpp
+	<stdint.h>
+	"crt.h"
+
+1661678430 source:/home/Kannagi/Documents/Projet/CRT/git/CRT/CRT/crt_fast.c
 	<stdint.h>
 	"crt.h"
 

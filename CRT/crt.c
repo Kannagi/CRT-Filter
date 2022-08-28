@@ -5,40 +5,22 @@ By Kannagichan (kannagichan@gmail.com)
 #include "crt.h"
 static unsigned char line_buf[0x4000];
 
-/*
-static inline void __attribute__((optimize("-O1"))) CRT_initline(unsigned char *dstPtr,int l,int n,int bytepixel)
+static inline void __attribute__((optimize("-O3"))) CRT_widthend(unsigned char *srcPtr,int i,int tmp,int bytepixel,int n)
 {
-	for(int j = 0;j < n;j+= bytepixel)
-	{
-		dstPtr[l+j+0] = (line_buf[j+0])&0xF8;
-		dstPtr[l+j+1] = (line_buf[j+1])&0xF8;
-		dstPtr[l+j+2] = (line_buf[j+2])&0xF8;
-		j+= bytepixel;
+	unsigned char R = srcPtr[i+0];
+	unsigned char G = srcPtr[i+1];
+	unsigned char B = srcPtr[i+2];
 
-		dstPtr[l+j+0] = (line_buf[j+0])|7;
-		dstPtr[l+j+1] = (line_buf[j+1])|7;
-		dstPtr[l+j+2] = (line_buf[j+2])|7;
+	for(int j = 0;j < n;j++)
+	{
+		line_buf[tmp+0] = R;
+		line_buf[tmp+1] = G;
+		line_buf[tmp+2] = B;
+		line_buf[tmp+3] = 0xFF;
+		tmp += bytepixel;
 	}
 
 }
-
-static inline void __attribute__((optimize("-O3"))) CRT_drawline(unsigned char *dstPtr,int l,int n,int bytepixel,float *fading)
-{
-
-	for(int j = 0;j < n;j+= bytepixel)
-	{
-		dstPtr[l+j+0] = (line_buf[j+0])*fading[0];
-		dstPtr[l+j+1] = (line_buf[j+1])*fading[0];
-		dstPtr[l+j+2] = (line_buf[j+2])*fading[0];
-		j+= bytepixel;
-
-		dstPtr[l+j+0] = (line_buf[j+0])*fading[1];
-		dstPtr[l+j+1] = (line_buf[j+1])*fading[1];
-		dstPtr[l+j+2] = (line_buf[j+2])*fading[1];
-	}
-
-}*/
-
 
 static inline void __attribute__((optimize("-O3"))) CRT_initline(unsigned char *dstPtr,int l,int n,int bytepixel)
 {
@@ -47,11 +29,15 @@ static inline void __attribute__((optimize("-O3"))) CRT_initline(unsigned char *
 
 	n = n>>2;
 	l = l>>2;
+
+	uint32_t fdg1 = 0xF8F8F8F8;
+	uint32_t fdg2 = 0x07070707;
+
 	for(int j = 0;j < n;j++)
 	{
-		pdstPtr[l+j] = (pline_buf[j])&0xF8F8F8F8;
+		pdstPtr[l+j] = (pline_buf[j])&fdg1;
 		j++;
-		pdstPtr[l+j] = (pline_buf[j])|0x07070707;
+		pdstPtr[l+j] = (pline_buf[j])|fdg2;
 	}
 
 }
@@ -60,7 +46,6 @@ static inline void __attribute__((optimize("-O2"))) CRT_drawline(unsigned char *
 {
 	float fdg1 = fading[0];
 	float fdg2 = fading[1];
-
 
 	for(int j = 0;j < n;j+= bytepixel)
 	{
@@ -77,9 +62,6 @@ static inline void __attribute__((optimize("-O2"))) CRT_drawline(unsigned char *
 }
 
 
-
-
-
 void __attribute__((optimize("-O3"))) CRTx22(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
 {
 	const int bytepixel = 4;
@@ -88,18 +70,18 @@ void __attribute__((optimize("-O3"))) CRTx22(unsigned char *srcPtr,unsigned char
 	int R = 0,G = 0,B = 0,RS,GS,BS;
 	int l = 0;
 	int x,y;
+	int lwidth = width-1;
 
 	for(y = 0;y < height;y++)
 	{
 		int tmp = 0;
-		for(x = 0;x < width;x++)
+		for(x = 0;x < lwidth;x++)
 		{
 
 			i = (x*bytepixel) + (y*srcpitch);
 			R = srcPtr[i+0];
 			G = srcPtr[i+1];
 			B = srcPtr[i+2];
-
 
 			i+=bytepixel;
 			RS = ( ((int)srcPtr[i+0]+R)>>1);
@@ -116,6 +98,7 @@ void __attribute__((optimize("-O3"))) CRTx22(unsigned char *srcPtr,unsigned char
 			line_buf[tmp+2] = BS;
 			tmp += bytepixel;
 		}
+		CRT_widthend(srcPtr,i,tmp,bytepixel,2);
 
 		int n = bytepixel*width*2;
 
@@ -143,12 +126,13 @@ void __attribute__((optimize("-O3"))) CRTx32(unsigned char *srcPtr,unsigned char
 	int R = 0,G = 0,B = 0,RS[3],GS[3],BS[3];
 	int l = 0,j;
 	int x,y;
+	int lwidth = width-1;
 
 	for(y = 0;y < height;y++)
 	{
 		int yp = y*srcpitch;
 		int tmp = 0;
-		for(x = 0;x < width;x++)
+		for(x = 0;x < lwidth;x++)
 		{
 			i = (x*bytepixel) + yp;
 			float srcR,srcG,srcB,RF,GF,BF;
@@ -170,8 +154,6 @@ void __attribute__((optimize("-O3"))) CRTx32(unsigned char *srcPtr,unsigned char
 			GS[1] = ( (srcG*0.7)+(GF*0.3) );
 			BS[1] = ( (srcB*0.7)+(BF*0.3) );
 
-
-
 			line_buf[tmp+0] = R;
 			line_buf[tmp+1] = G;
 			line_buf[tmp+2] = B;
@@ -187,6 +169,7 @@ void __attribute__((optimize("-O3"))) CRTx32(unsigned char *srcPtr,unsigned char
 				tmp += bytepixel;
 			}
 		}
+		CRT_widthend(srcPtr,i,tmp,bytepixel,3);
 
 		int n = bytepixel*width*3;
 
@@ -212,12 +195,13 @@ void __attribute__((optimize("-O3"))) CRTx33(unsigned char *srcPtr,unsigned char
 	int R = 0,G = 0,B = 0,RS[3],GS[3],BS[3];
 	int l = 0,j;
 	int x,y;
+	int lwidth = width-1;
 
 	for(y = 0;y < height;y++)
 	{
 		int yp = y*srcpitch;
 		int tmp = 0;
-		for(x = 0;x < width;x++)
+		for(x = 0;x < lwidth;x++)
 		{
 			i = (x*bytepixel) + yp;
 			float srcR,srcG,srcB,RF,GF,BF;
@@ -255,6 +239,7 @@ void __attribute__((optimize("-O3"))) CRTx33(unsigned char *srcPtr,unsigned char
 				tmp += bytepixel;
 			}
 		}
+		CRT_widthend(srcPtr,i,tmp,bytepixel,3);
 
 		int n = bytepixel*width*3;
 		CRT_initline(dstPtr,l,n,bytepixel);
@@ -290,12 +275,13 @@ void __attribute__((optimize("-O3"))) CRTx43(unsigned char *srcPtr,unsigned char
 	int R = 0,G = 0,B = 0,RS[3],GS[3],BS[3];
 	int l = 0,j;
 	int x,y;
+	int lwidth = width-1;
 
 	for(y = 0;y < height;y++)
 	{
 		int yp = y*srcpitch;
 		int tmp = 0;
-		for(x = 0;x < width;x++)
+		for(x = 0;x < lwidth;x++)
 		{
 			i = (x*bytepixel) + yp;
 			float srcR,srcG,srcB,RF,GF,BF;
@@ -337,6 +323,7 @@ void __attribute__((optimize("-O3"))) CRTx43(unsigned char *srcPtr,unsigned char
 				tmp += bytepixel;
 			}
 		}
+		CRT_widthend(srcPtr,i,tmp,bytepixel,4);
 
 		int n = bytepixel*width*4;
 		CRT_initline(dstPtr,l,n,bytepixel);
@@ -372,12 +359,13 @@ void __attribute__((optimize("-O3"))) CRTx44(unsigned char *srcPtr,unsigned char
 	int R = 0,G = 0,B = 0,RS[3],GS[3],BS[3];
 	int l = 0,j;
 	int x,y;
+	int lwidth = width-1;
 
 	for(y = 0;y < height;y++)
 	{
 		int yp = y*srcpitch;
 		int tmp = 0;
-		for(x = 0;x < width;x++)
+		for(x = 0;x < lwidth;x++)
 		{
 			i = (x*bytepixel) + yp;
 			float srcR,srcG,srcB,RF,GF,BF;
@@ -420,6 +408,8 @@ void __attribute__((optimize("-O3"))) CRTx44(unsigned char *srcPtr,unsigned char
 			}
 
 		}
+		CRT_widthend(srcPtr,i,tmp,bytepixel,4);
+
 
 		int n = bytepixel*width*4;
 		CRT_initline(dstPtr,l,n,bytepixel);
@@ -456,6 +446,16 @@ void __attribute__((optimize("-O3"))) CRTx44(unsigned char *srcPtr,unsigned char
 }
 
 
+
+static const float fading1 = 1.0/1.25;
+static const float fading2 = 1.0/1.125;
+
+static const float fading3 = 1.0/1.75;
+static const float fading4 = 1.0/1.5;
+
+static const float fading5 = 1.0/2;
+static const float fading6 = 1.0/1.8;
+
 void __attribute__((optimize("-O3"))) CRTx54(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
 {
 	const int bytepixel = 4;
@@ -466,12 +466,14 @@ void __attribute__((optimize("-O3"))) CRTx54(unsigned char *srcPtr,unsigned char
 	int x,y;
 
 	int tmp =0;
+	int lwidth = width-1;
 
 	for(y = 0;y < height;y++)
 	{
 		tmp = 0;
 		int yp = y*srcpitch;
-		for(x = 0;x < width;x++)
+
+		for(x = 0;x < lwidth;x++)
 		{
 			i = (x*bytepixel) + yp;
 			float srcR,srcG,srcB,RF,GF,BF;
@@ -517,6 +519,7 @@ void __attribute__((optimize("-O3"))) CRTx54(unsigned char *srcPtr,unsigned char
 			}
 
 		}
+		CRT_widthend(srcPtr,i,tmp,bytepixel,5);
 
 		int n = bytepixel*width*5;
 		CRT_initline(dstPtr,l,n,bytepixel);
