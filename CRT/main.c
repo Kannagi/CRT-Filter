@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 
 
     SDL_Surface *image,*copy,*image2;
-    image2 = IMG_Load("ff6shot080.png");
+    image2 = IMG_Load("ff6shot172.png");
 	copy = SDL_CreateRGBSurface(0,image2->w,image2->h,32,0,0,0,0);
     SDL_BlitSurface(image2,NULL,copy,NULL);
 
@@ -38,6 +38,15 @@ int main(int argc, char** argv)
     int pitch = copy->w*4;
     int opitch = screen->w*4;
 
+    screen = SDL_SetVideoMode(image2->w*3, image2->h*3, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+	SDL_FillRect(screen,NULL,SDL_MapRGB(screen->format,128,128,128));
+	opitch = screen->w*4;
+
+
+	CRTx33(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
+
+
+/*
 	if(mode == 0)
 	{
 		screen = SDL_SetVideoMode(image2->w*2, image2->h*2, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
@@ -54,7 +63,14 @@ int main(int argc, char** argv)
 			SDL_FillRect(screen,NULL,SDL_MapRGB(screen->format,128,128,128));
 			opitch = screen->w*4;
 
-			CRTx43(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
+
+			uint64_t start = rdtsc();
+
+			for(int i;i <60;i++)
+				CRTx43(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
+
+			uint64_t end = rdtsc()-start;
+			printf("%d\n",end);
 		}else
 		if(mode == 2)
 		{
@@ -79,6 +95,7 @@ int main(int argc, char** argv)
 			printf("%d\n",end);
 		}
 	}
+	*/
 
 	printf("%dx%d\n",screen->w,screen->h);
 

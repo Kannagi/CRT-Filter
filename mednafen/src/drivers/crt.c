@@ -39,6 +39,7 @@ static inline void __attribute__((optimize("-O3"))) CRT_drawline(unsigned char *
 
 }*/
 
+
 static inline void __attribute__((optimize("-O3"))) CRT_initline(unsigned char *dstPtr,int l,int n,int bytepixel)
 {
 	uint32_t *pline_buf = (uint32_t*)line_buf;
@@ -90,6 +91,7 @@ void __attribute__((optimize("-O3"))) CRTx22(unsigned char *srcPtr,unsigned char
 
 	for(y = 0;y < height;y++)
 	{
+		int tmp = 0;
 		for(x = 0;x < width;x++)
 		{
 
@@ -105,7 +107,6 @@ void __attribute__((optimize("-O3"))) CRTx22(unsigned char *srcPtr,unsigned char
 			BS = ( ((int)srcPtr[i+2]+B)>>1);
 
 
-			int tmp = x*bytepixel*2;
 			line_buf[tmp+0] = R;
 			line_buf[tmp+1] = G;
 			line_buf[tmp+2] = B;
@@ -113,7 +114,7 @@ void __attribute__((optimize("-O3"))) CRTx22(unsigned char *srcPtr,unsigned char
 			line_buf[tmp+0] = RS;
 			line_buf[tmp+1] = GS;
 			line_buf[tmp+2] = BS;
-
+			tmp += bytepixel;
 		}
 
 		int n = bytepixel*width*2;
@@ -146,6 +147,7 @@ void __attribute__((optimize("-O3"))) CRTx32(unsigned char *srcPtr,unsigned char
 	for(y = 0;y < height;y++)
 	{
 		int yp = y*srcpitch;
+		int tmp = 0;
 		for(x = 0;x < width;x++)
 		{
 			i = (x*bytepixel) + yp;
@@ -170,24 +172,23 @@ void __attribute__((optimize("-O3"))) CRTx32(unsigned char *srcPtr,unsigned char
 
 
 
-			int tmp = x*bytepixel*4;
 			line_buf[tmp+0] = R;
 			line_buf[tmp+1] = G;
 			line_buf[tmp+2] = B;
 			line_buf[tmp+3] = 0xFF;
+			tmp += bytepixel;
 
 			for(j = 0;j < 2;j++)
 			{
-				line_buf[tmp+4] = RS[j];
-				line_buf[tmp+5] = GS[j];
-				line_buf[tmp+6] = BS[j];
-				line_buf[tmp+7] = 0xFF;
-
+				line_buf[tmp+0] = RS[j];
+				line_buf[tmp+1] = GS[j];
+				line_buf[tmp+2] = BS[j];
+				line_buf[tmp+3] = 0xFF;
 				tmp += bytepixel;
 			}
 		}
 
-		int n = bytepixel*width*2;
+		int n = bytepixel*width*3;
 
 		CRT_initline(dstPtr,l,n,bytepixel);
 		l += pitch;
@@ -215,6 +216,7 @@ void __attribute__((optimize("-O3"))) CRTx33(unsigned char *srcPtr,unsigned char
 	for(y = 0;y < height;y++)
 	{
 		int yp = y*srcpitch;
+		int tmp = 0;
 		for(x = 0;x < width;x++)
 		{
 			i = (x*bytepixel) + yp;
@@ -237,24 +239,24 @@ void __attribute__((optimize("-O3"))) CRTx33(unsigned char *srcPtr,unsigned char
 			GS[1] = ( (srcG*0.7)+(GF*0.3) );
 			BS[1] = ( (srcB*0.7)+(BF*0.3) );
 
-			int tmp = x*bytepixel*4;
+
 			line_buf[tmp+0] = R;
 			line_buf[tmp+1] = G;
 			line_buf[tmp+2] = B;
 			line_buf[tmp+3] = 0xFF;
+			tmp += bytepixel;
 
 			for(j = 0;j < 2;j++)
 			{
-				line_buf[tmp+4] = RS[j];
-				line_buf[tmp+5] = GS[j];
-				line_buf[tmp+6] = BS[j];
-				line_buf[tmp+7] = 0xFF;
-
+				line_buf[tmp+0] = RS[j];
+				line_buf[tmp+1] = GS[j];
+				line_buf[tmp+2] = BS[j];
+				line_buf[tmp+3] = 0xFF;
 				tmp += bytepixel;
 			}
 		}
 
-		int n = bytepixel*width*4;
+		int n = bytepixel*width*3;
 		CRT_initline(dstPtr,l,n,bytepixel);
 		l += pitch;
 
@@ -292,6 +294,7 @@ void __attribute__((optimize("-O3"))) CRTx43(unsigned char *srcPtr,unsigned char
 	for(y = 0;y < height;y++)
 	{
 		int yp = y*srcpitch;
+		int tmp = 0;
 		for(x = 0;x < width;x++)
 		{
 			i = (x*bytepixel) + yp;
@@ -319,19 +322,18 @@ void __attribute__((optimize("-O3"))) CRTx43(unsigned char *srcPtr,unsigned char
 			BS[2] = ( (srcB*0.7)+(BF*0.3) );
 
 
-			int tmp = x*bytepixel*4;
 			line_buf[tmp+0] = R;
 			line_buf[tmp+1] = G;
 			line_buf[tmp+2] = B;
 			line_buf[tmp+3] = 0xFF;
+			tmp += bytepixel;
 
 			for(j = 0;j < 3;j++)
 			{
-				line_buf[tmp+4] = RS[j];
-				line_buf[tmp+5] = GS[j];
-				line_buf[tmp+6] = BS[j];
-				line_buf[tmp+7] = 0xFF;
-
+				line_buf[tmp+0] = RS[j];
+				line_buf[tmp+1] = GS[j];
+				line_buf[tmp+2] = BS[j];
+				line_buf[tmp+3] = 0xFF;
 				tmp += bytepixel;
 			}
 		}
@@ -374,6 +376,7 @@ void __attribute__((optimize("-O3"))) CRTx44(unsigned char *srcPtr,unsigned char
 	for(y = 0;y < height;y++)
 	{
 		int yp = y*srcpitch;
+		int tmp = 0;
 		for(x = 0;x < width;x++)
 		{
 			i = (x*bytepixel) + yp;
@@ -401,18 +404,18 @@ void __attribute__((optimize("-O3"))) CRTx44(unsigned char *srcPtr,unsigned char
 			BS[2] = ( (srcB*0.7)+(BF*0.3) );
 
 
-			int tmp = x*bytepixel*4;
 			line_buf[tmp+0] = R;
 			line_buf[tmp+1] = G;
 			line_buf[tmp+2] = B;
 			line_buf[tmp+3] = 0xFF;
+			tmp += bytepixel;
 
 			for(j = 0;j < 3;j++)
 			{
-				line_buf[tmp+4] = RS[j];
-				line_buf[tmp+5] = GS[j];
-				line_buf[tmp+6] = BS[j];
-				line_buf[tmp+7] = 0xFF;
+				line_buf[tmp+0] = RS[j];
+				line_buf[tmp+1] = GS[j];
+				line_buf[tmp+2] = BS[j];
+				line_buf[tmp+3] = 0xFF;
 				tmp += bytepixel;
 			}
 
@@ -514,8 +517,6 @@ void __attribute__((optimize("-O3"))) CRTx54(unsigned char *srcPtr,unsigned char
 			}
 
 		}
-
-		printf("%x\n",tmp);
 
 		int n = bytepixel*width*5;
 		CRT_initline(dstPtr,l,n,bytepixel);
