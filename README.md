@@ -2,16 +2,23 @@
 
 Algorithm to simulate a CRT.
 
-<img src="CRT/bin/ActRaiser2_1.png">
+<img src="screen_emu/ActRaiser2_1.png">
 
-<img src="CRT/bin/ActRaiser2_2.png">
+<img src="screen_emu/ActRaiser2_2.png">
 
-<img src="CRT/bin/screen/1_filter2.png">
+<img src="screen_emu/SF2_arcade.png">
 
-<img src="CRT/bin/screen/4_filter2.png">
+<img src="screen_emu/mslugx.png">
 
-<img src="CRT/bin/screen/filter2.png">
+<img src="screen_emu/mslugx_2.png">
 
-<img src="CRT/bin/FF6_1.png">
+<img src="screen_emu/SSF2X.png">
 
-<img src="CRT/bin/FF6_2.png">
+<img src="screen_emu/Flink.png">
+
+<img src="screen_emu/TH3.png">
+
+<img src="screen_emu/SF2T.png">
+
+<img src="screen_emu/CT.png">
+
