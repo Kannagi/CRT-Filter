@@ -445,17 +445,6 @@ void __attribute__((optimize("-O3"))) CRTx44(unsigned char *srcPtr,unsigned char
 
 }
 
-
-
-static const float fading1 = 1.0/1.25;
-static const float fading2 = 1.0/1.125;
-
-static const float fading3 = 1.0/1.75;
-static const float fading4 = 1.0/1.5;
-
-static const float fading5 = 1.0/2;
-static const float fading6 = 1.0/1.8;
-
 void __attribute__((optimize("-O3"))) CRTx54(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
 {
 	const int bytepixel = 4;
