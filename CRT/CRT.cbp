@@ -12,6 +12,9 @@
 				<Option object_output="obj/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Linker>
+					<Add library="GL" />
+				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
@@ -28,6 +31,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="crt.h" />
+		<Unit filename="crt_fast.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>

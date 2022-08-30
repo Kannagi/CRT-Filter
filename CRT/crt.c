@@ -62,7 +62,7 @@ static inline void __attribute__((optimize("-O2"))) CRT_drawline(unsigned char *
 }
 
 
-void __attribute__((optimize("-O3"))) CRTx22(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
+void __attribute__((optimize("-O2"))) CRTx22(unsigned char *srcPtr,unsigned char *dstPtr,int width, int height,int srcpitch,int pitch)
 {
 	const int bytepixel = 4;
 	int i;
