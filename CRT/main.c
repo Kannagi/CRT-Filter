@@ -27,7 +27,7 @@ int main(int argc, char** argv)
     SDL_Surface *screen;
 
     SDL_Surface *image,*copy;
-    image = IMG_Load("actraiser-2.png");
+    image = IMG_Load("/home/Kannagi/Documents/Projet/CRT/git/CRT/CRT/bin/lastb/lastbld2.png");
 	copy = SDL_CreateRGBSurface(0,image->w,image->h,32,0,0,0,0);
     SDL_BlitSurface(image,NULL,copy,NULL);
 
@@ -37,7 +37,7 @@ int main(int argc, char** argv)
     int pitch = copy->w*4;
     int opitch = screen->w*4;
 
-    SDL_Surface *screen2 = SDL_SetVideoMode(256*4, 224*3, 16,SDL_OPENGL);
+    SDL_Surface *screen2 = SDL_SetVideoMode(256*4, 224*4, 32,SDL_OPENGL);
 	if ( !screen2 ) {
 		printf("Unable to set video mode: %s\n", SDL_GetError());
 	}
@@ -83,7 +83,7 @@ int main(int argc, char** argv)
 
 
 
-/*
+
 
 
 	uint64_t start = rdtsc();
@@ -96,15 +96,14 @@ int main(int argc, char** argv)
 
 
 
-	printf("%dx%d\n",screen->w,screen->h);*/
+	printf("%dx%d\n",screen->w,screen->h);
 
 
 
 	int continuer = 1;
 	SDL_Event event;
 
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
 	glBindTexture( GL_TEXTURE_2D, texture );
 
 	while(continuer)
