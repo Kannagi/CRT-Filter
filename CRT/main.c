@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     SDL_Surface *screen;
 
     SDL_Surface *image,*copy;
-    image = IMG_Load("DQ8.png");
+    image = IMG_Load("som2shot09.png");
 	copy = SDL_CreateRGBSurface(0,image->w,image->h,32,0,0,0,0);
     SDL_BlitSurface(image,NULL,copy,NULL);
 
@@ -93,8 +93,8 @@ int main(int argc, char** argv)
 
 	uint64_t start = rdtsc();
 
-	for(int i;i <60;i++)
-		CRTx44(copy->pixels,screen->pixels,copy->w,copy->h,0>>1,0>>1);
+	for(int i;i <100;i++)
+		CRTx22fast(copy->pixels,screen->pixels,copy->w,copy->h,0>>1,0>>1);
 
 	uint64_t end = rdtsc()-start;
 	printf("%d\n",end);
