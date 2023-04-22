@@ -14,7 +14,9 @@
 
 uint64_t rdtsc(void) {
   register uint64_t x;
+  __asm__ volatile ("lfence");
   __asm__ volatile ("rdtsc" : "=A" (x));
+  __asm__ volatile ("lfence");
   return x;
 }
 
@@ -27,7 +29,7 @@ int main(int argc, char** argv)
     SDL_Surface *screen;
 
     SDL_Surface *image,*copy;
-    image = IMG_Load("/home/Kannagi/Documents/Projet/CRT/git/CRT/CRT/bin/lastb/lastbld2.png");
+    image = IMG_Load("DQ8.png");
 	copy = SDL_CreateRGBSurface(0,image->w,image->h,32,0,0,0,0);
     SDL_BlitSurface(image,NULL,copy,NULL);
 
@@ -37,7 +39,7 @@ int main(int argc, char** argv)
     int pitch = copy->w*4;
     int opitch = screen->w*4;
 
-    SDL_Surface *screen2 = SDL_SetVideoMode(256*4, 224*4, 32,SDL_OPENGL);
+    SDL_Surface *screen2 = SDL_SetVideoMode(1400, 900, 32,SDL_OPENGL);
 	if ( !screen2 ) {
 		printf("Unable to set video mode: %s\n", SDL_GetError());
 	}
@@ -76,6 +78,9 @@ int main(int argc, char** argv)
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
+
+
+
 	// Edit the texture object's image data using the information SDL_Surface gives us
 	glTexImage2D( GL_TEXTURE_2D, 0, 4, screen->w, screen->h, 0,
 				  GL_BGRA, GL_UNSIGNED_BYTE, screen->pixels );
@@ -89,7 +94,7 @@ int main(int argc, char** argv)
 	uint64_t start = rdtsc();
 
 	for(int i;i <60;i++)
-		CRTx22fast(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
+		CRTx44(copy->pixels,screen->pixels,copy->w,copy->h,0>>1,0>>1);
 
 	uint64_t end = rdtsc()-start;
 	printf("%d\n",end);
