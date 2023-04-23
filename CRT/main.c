@@ -21,7 +21,7 @@ uint64_t rdtsc(void) {
 }
 
 
-int main(int argc, char** argv)
+void crtfast()
 {
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     SDL_Surface *screen;
 
     SDL_Surface *image,*copy;
-    image = IMG_Load("som2shot09.png");
+    image = IMG_Load("/home/Kannagi/Documents/Projet/CRT/git/CRT/CRT/bin/chronotriger/ctshot17.png");
 	copy = SDL_CreateRGBSurface(0,image->w,image->h,32,0,0,0,0);
     SDL_BlitSurface(image,NULL,copy,NULL);
 
@@ -39,7 +39,7 @@ int main(int argc, char** argv)
     int pitch = copy->w*4;
     int opitch = screen->w*4;
 
-    SDL_Surface *screen2 = SDL_SetVideoMode(1400, 900, 32,SDL_OPENGL);
+    SDL_Surface *screen2 = SDL_SetVideoMode(512, 448, 32,SDL_OPENGL);
 	if ( !screen2 ) {
 		printf("Unable to set video mode: %s\n", SDL_GetError());
 	}
@@ -89,7 +89,7 @@ int main(int argc, char** argv)
 
 
 
-
+/*
 
 	uint64_t start = rdtsc();
 
@@ -99,7 +99,7 @@ int main(int argc, char** argv)
 	uint64_t end = rdtsc()-start;
 	printf("%d\n",end);
 
-
+*/
 
 	printf("%dx%d\n",screen->w,screen->h);
 
@@ -180,15 +180,16 @@ int main(int argc, char** argv)
 
     SDL_Quit();
 
-    return 0;
-
 }
 
 
 
 
-int main1(int argc, char** argv)
+int main(int argc, char** argv)
 {
+	crtfast();
+
+	return 0;
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -196,31 +197,16 @@ int main1(int argc, char** argv)
 
 
     SDL_Surface *image,*copy,*image2;
-    image2 = IMG_Load("ff6shot172.png");
+    image2 = IMG_Load("/home/Kannagi/Documents/Projet/CRT/git/CRT/CRT/bin/kof/kof98k.png");
 	copy = SDL_CreateRGBSurface(0,image2->w,image2->h,32,0,0,0,0);
     SDL_BlitSurface(image2,NULL,copy,NULL);
 
 
-    int mode =3;
+    int mode =2;
 
     int pitch = copy->w*4;
     int opitch = screen->w*4;
 
-	screen = SDL_SetVideoMode(image2->w*2, image2->h*2, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-	SDL_FillRect(screen,NULL,SDL_MapRGB(screen->format,128,128,128));
-	opitch = screen->w*4;
-
-
-	uint64_t start = rdtsc();
-
-			for(int i;i <60;i++)
-				CRTx22fast(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
-
-			uint64_t end = rdtsc()-start;
-			printf("%d\n",end);
-
-
-/*
 	if(mode == 0)
 	{
 		screen = SDL_SetVideoMode(image2->w*2, image2->h*2, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
@@ -237,14 +223,17 @@ int main1(int argc, char** argv)
 			SDL_FillRect(screen,NULL,SDL_MapRGB(screen->format,128,128,128));
 			opitch = screen->w*4;
 
+			CRTx43(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
 
+
+/*
 			uint64_t start = rdtsc();
 
 			for(int i;i <60;i++)
 				CRTx43(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
 
 			uint64_t end = rdtsc()-start;
-			printf("%d\n",end);
+			printf("%d\n",end);*/
 		}else
 		if(mode == 2)
 		{
@@ -259,6 +248,8 @@ int main1(int argc, char** argv)
 			SDL_FillRect(screen,NULL,SDL_MapRGB(screen->format,128,128,128));
 			opitch = screen->w*4;
 
+			CRTx54(copy->pixels,screen->pixels,copy->w,copy->h,pitch,opitch);
+/*
 			uint64_t start = rdtsc();
 
 			for(int i;i <60;i++)
@@ -266,10 +257,10 @@ int main1(int argc, char** argv)
 
 			uint64_t end = rdtsc()-start;
 
-			printf("%d\n",end);
+			printf("%d\n",end);*/
 		}
 	}
-	*/
+
 
 	printf("%dx%d\n",screen->w,screen->h);
 

@@ -272,8 +272,8 @@ static inline void CRT_widthend_fast2(unsigned char *srcPtr,unsigned char *dstPt
 	uint32_t pixels;
 
 	pixels = ((R>>1)) | (((G>>1))<<8) | (((B>>1))<<16);
-	pdstPtr[tmp] = pixels&0xFEFEFEFE;
-	pdstPtr[tmp+1] = pixels|0x01010101;
+	pdstPtr[tmp] = pixels&0xF8F8F8F8;
+	pdstPtr[tmp+1] = pixels|0x07070707;
 
 
 }
@@ -326,9 +326,6 @@ void CRTx22fast(unsigned char *srcPtr,unsigned char *dstPtr,int width, int heigh
 		}
 		CRT_widthend_fast(srcPtr,dstPtr,i+0,tmp,bytepixel,2);
 		tmp +=2;
-
-		fading1 = 0xFEFEFEFE;
-		fading2 = 0x01010101;
 
 		for(x = 0;x < lwidth;x++)
 		{
